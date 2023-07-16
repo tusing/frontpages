@@ -36,21 +36,52 @@ def get_delay(target_time, target_timezone):
     return delay
 
 
-def crop_image(image, crop_params):
-    if crop_params is not None:
-        left_edge = crop_params["left_edge"] * image.width
-        top_edge = crop_params["top_edge"] * image.height
-        right_edge = image.width - (crop_params["right_edge"] * image.width)
-        bottom_edge = image.height - \
-            (crop_params["bottom_edge"] * image.height)
-        image = image.crop((left_edge, top_edge, right_edge, bottom_edge))
+def crop_and_resize_image(image, crop_params, max_height, max_width):
+    if crop_params:
+        image = image.crop((
+            crop_params["left_edge"] * image.width,
+            crop_params["top_edge"] * image.height,
+            image.width - (crop_params["right_edge"] * image.width),
+            image.height - (crop_params["bottom_edge"] * image.height)
+        ))
+    
+    ratio = min(max_width / image.width, max_height / image.height)
+    image = image.resize(
+        (int(image.width * ratio), int(image.height * ratio)), 
+        Image.LANCZOS
+    )
+
     return image
 
 
-def resize_image(image, max_height, max_width):
-    ratio = min(max_width / image.width, max_height / image.height)
-    new_width, new_height = int(image.width * ratio), int(image.height * ratio)
-    return image.resize((new_width, new_height), Image.LANCZOS)
+def process_pdf(pdf_config):
+    pdf_url = pdf_config["url"]
+    img_filename = f"{os.path.basename(pdf_url)}.png"
+
+    logging.info(f"Fetching {pdf_url}...")
+
+    # Grab and convert the PDF to an image
+    PDF_BYTES = requests.get(pdf_url).content
+    image = convert_from_bytes(
+        PDF_BYTES, dpi=config["image"]["dpi"], first_page=1, last_page=1
+    )[0]
+
+    image = crop_and_resize_image(
+        image, 
+        pdf_config.get("crop"), 
+        config["image"]["max_height"], 
+        config["image"]["max_width"]
+    )
+
+    # Save image to in-memory file
+    image_file = BytesIO()
+    image.save(image_file, "PNG")
+    image_file.seek(0)
+
+    # Add image to cache
+    cache[img_filename] = image_file
+
+    logging.info(f"Finished fetching {pdf_url}")
 
 
 def fetch_newspapers():
@@ -59,39 +90,14 @@ def fetch_newspapers():
     threading.Timer(delay, fetch_newspapers).start()
 
     for pdf_config in config["pdfs"]:
-        pdf_url = pdf_config["url"]
-        img_filename = f"{os.path.basename(pdf_url)}.png"
-
-        logging.info(f"Fetching {pdf_url}...")
-
-        # Grab and convert the PDF to an image
-        PDF_BYTES = requests.get(pdf_url).content
-        image = convert_from_bytes(
-            PDF_BYTES, dpi=config["image"]["dpi"], first_page=1, last_page=1
-        )[0]
-
-        image = crop_image(image, pdf_config.get("crop"))
-        image = resize_image(
-            image, config["image"]["max_height"], config["image"]["max_width"])
-
-        # Save image to in-memory file
-        image_file = BytesIO()
-        image.save(image_file, "PNG")
-        image_file.seek(0)
-
-        # Add image to cache
-        cache[img_filename] = image_file
-
-        logging.info(f"Finished fetching {pdf_url}")
+        process_pdf(pdf_config)
 
 
 @app.route("/")
 def home():
     pdf_config = next(pdfs)
-    pdf_url = pdf_config["url"]
-    img_filename = f"{os.path.basename(pdf_url)}.png"
-    image_file = cache[img_filename]
-    image_copy = BytesIO(image_file.getbuffer())
+    img_filename = f"{os.path.basename(pdf_config['url'])}.png"
+    image_copy = BytesIO(cache[img_filename].getbuffer())
     return send_file(image_copy, mimetype="image/png")
 
 
