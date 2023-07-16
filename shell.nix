@@ -14,6 +14,6 @@ pkgs.mkShell {
   shellHook = ''
     echo "Entering nix-shell..."
     #export PATH="$PATH:${pkgs.poppler_utils}/bin"
-    export FLASK_APP=server.py
+    export FLASK_APP=frontpages.py
   '';
 }

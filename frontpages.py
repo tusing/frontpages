@@ -8,6 +8,7 @@ from itertools import cycle
 from PIL import Image
 
 app = Flask(__name__)
+app.run(host='0.0.0.0')
 
 # Load configuration from YAML file
 with open('config.yaml', 'r') as f:

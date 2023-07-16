@@ -1,0 +1,5 @@
+Flask
+requests
+PyYAML
+pdf2image
+Pillow
