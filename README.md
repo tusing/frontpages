@@ -21,7 +21,7 @@ pdfs:
   # More newspapers...
 
 host: "0.0.0.0" # Run on all addresses, set to 127.0.0.1 for localhost-only
-port: 5000 # The port to run the web-server on
+port: 5001 # The port to run the web-server on
 cache_enabled: True  # Enable in-memory caching of images (~3MB/newspaper)
 cache_timeout: 14400  # Cache timeout in seconds - here, images are cached for 4 hours
 dpi: 300  # Resolution for the PDF to image conversion
