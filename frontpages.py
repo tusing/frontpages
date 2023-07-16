@@ -39,12 +39,11 @@ def home():
 
         # Apply cropping if parameters specified
         if crop_params := pdf_config.get('crop'):
-            image = image.crop((
-                crop_params['left_edge'], 
-                crop_params['top_edge'], 
-                image.width - crop_params['right_edge'],
-                image.height - crop_params['bottom_edge']
-            ))
+            left_edge = crop_params['left_edge'] * image.width
+            top_edge = crop_params['top_edge'] * image.height
+            right_edge = image.width - (crop_params['right_edge'] * image.width)
+            bottom_edge = image.height - (crop_params['bottom_edge'] * image.height)
+            image = image.crop((left_edge, top_edge, right_edge, bottom_edge))
 
         # Resize the image
         image = resize_image(image, MAX_HEIGHT, MAX_WIDTH)
@@ -61,4 +60,4 @@ def home():
     return send_file(image_file, mimetype='image/png')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+    app.run(host=config['host'], port=config['port'])

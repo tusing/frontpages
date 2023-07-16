@@ -1,23 +1,25 @@
 pdfs:
   - url: 'https://cdn.freedomforum.org/dfp/pdf15/NY_NYT.pdf'
     crop: 
-      left_edge: 75
-      right_edge: 75
-      top_edge: 100
-      bottom_edge: 200
+      left_edge: 0.02
+      right_edge: 0.02
+      top_edge: 0.022
+      bottom_edge: 0.03
   - url: 'https://cdn.freedomforum.org/dfp/pdf15/WSJ.pdf'
     crop: 
-      left_edge: 100
-      right_edge: 100
-      top_edge: 100
-      bottom_edge: 100
+      left_edge: 0.04
+      right_edge: 0.04
+      top_edge: 0.02
+      bottom_edge: 0.025
   - url: 'https://cdn.freedomforum.org/dfp/pdf15/CA_SFC.pdf'
     crop: 
-      left_edge: 100
-      right_edge: 100
-      top_edge: 75
-      bottom_edge: 100
+      left_edge: 0.04
+      right_edge: 0.04
+      top_edge: 0.015
+      bottom_edge: 0.02
 
+host: "0.0.0.0"
+port: 5000
 cache_enabled: True
 cache_timeout: 14400 # 4 hours
 dpi: 300
