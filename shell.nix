@@ -5,6 +5,7 @@ pkgs.mkShell {
     pkgs.poppler_utils
     pkgs.python3
     flask
+    flask-caching
     pdf2image
     pillow
     pyyaml

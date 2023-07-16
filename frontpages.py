@@ -1,30 +1,25 @@
+import os
 import yaml
 from flask import Flask, send_file
+from flask_caching import Cache
 import requests
-import os
-import datetime
-from pdf2image import convert_from_path
+from pdf2image import convert_from_bytes
 from itertools import cycle
 from PIL import Image
-
-app = Flask(__name__)
-app.run(host='0.0.0.0')
+from io import BytesIO
 
 # Load configuration from YAML file
 with open('config.yaml', 'r') as f:
     config = yaml.safe_load(f)
 
+app = Flask(__name__)
 pdfs = cycle(config['pdfs'])
-PDF_PATH = 'tmp.pdf'
-
 MAX_WIDTH = config['max_width']
 MAX_HEIGHT = config['max_height']
 
-def get_cache_folder():
-    date_str = datetime.datetime.now().strftime('%Y%m%d')
-    folder_path = os.path.join('cache', date_str)
-    os.makedirs(folder_path, exist_ok=True)
-    return folder_path
+if config['cache_enabled'] == True:
+    cache = Cache(app, config={'CACHE_TYPE': 'SimpleCache', 'CACHE_DEFAULT_TIMEOUT': config['cache_timeout']})
+
 
 def resize_image(image, max_height, max_width):
     # Calculate the ratio to maintain aspect ratio
@@ -43,18 +38,21 @@ def resize_image(image, max_height, max_width):
 def home():
     pdf_config = next(pdfs)
     pdf_url = pdf_config['url']
-    crop_params = pdf_config.get('crop')  # Use .get() to allow None if 'crop' key does not exist
+    crop_params = pdf_config.get('crop') 
     img_filename = f'{os.path.basename(pdf_url)}.png'
-    cache_folder = get_cache_folder()
-    img_path = os.path.join(cache_folder, img_filename)
+
+    # Get the image if it exists in cache
+    if config['cache_enabled'] == True:
+        cached_image_data = cache.get(img_filename)
+    else:
+        cached_image_data = None
 
     # if image doesn't exist in cache, download and convert pdf
-    if not os.path.exists(img_path):
+    if cached_image_data is None:
         response = requests.get(pdf_url)
-        with open(PDF_PATH, 'wb') as f:
-            f.write(response.content)
+        PDF_BYTES = response.content
 
-        image = convert_from_path(PDF_PATH, dpi=config['dpi'], first_page=1, last_page=1)[0]
+        image = convert_from_bytes(PDF_BYTES, dpi=config['dpi'], first_page=1, last_page=1)[0]
 
         # Apply cropping if crop parameters are specified
         if crop_params is not None:
@@ -68,7 +66,19 @@ def home():
         # Resize the image
         image = resize_image(image, MAX_HEIGHT, MAX_WIDTH)
 
-        # Save the final image to disk
-        image.save(img_path, 'PNG')
+        # Save the final image to in-memory file
+        image_file = BytesIO()
+        image.save(image_file, 'PNG')
+        image_file.seek(0)  # Move cursor back to beginning of file
 
-    return send_file(img_path, mimetype='image/png')
+        # Add the image to cache
+        if config['cache_enabled'] == True:
+            cache.set(img_filename, image_file)
+
+    else:
+        image_file = cached_image_data
+
+    return send_file(image_file, mimetype='image/png')
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0')

@@ -18,6 +18,8 @@ pdfs:
       top_edge: 75
       bottom_edge: 100
 
+cache_enabled: True
+cache_timeout: 14400 # 4 hours
 dpi: 300
 max_width: 1440
 max_height: 2560
