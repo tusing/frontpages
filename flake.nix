@@ -7,8 +7,6 @@
   outputs = { self, nixpkgs, flake-utils }: flake-utils.lib.eachDefaultSystem (system:
     let
       pkgs = nixpkgs.legacyPackages.${system};
-
-      # Define python packages for our app
       pythonEnv = pkgs.python3.withPackages (ps: with ps; [
         flask
         flask-caching
@@ -17,10 +15,9 @@
         pillow
         pyyaml
       ]);
-
-      # Define the app
+      path = "${pythonEnv}/bin:${pkgs.poppler_utils}/bin:$PATH";
       app = pkgs.writeShellScriptBin "frontpages" ''
-        export PATH="${pythonEnv}/bin:${pkgs.poppler_utils}/bin:$PATH"
+        export PATH="${path}"
         python3 frontpages.py
       '';
 
@@ -30,7 +27,7 @@
       devShell = pkgs.mkShell {
         buildInputs = with pkgs; [ pythonEnv poppler_utils ];
         shellHook = ''
-          export PATH="${pythonEnv}/bin:${pkgs.poppler_utils}/bin:$PATH"
+          export PATH="${path}"
         '';
       };
     });
