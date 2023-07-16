@@ -31,7 +31,7 @@ max_height: 2560  # The maximum height of the image
 
 ### With Nix
 
-If you have [Nix](https://nixos.org/guides/install-nix.html) installed, you can use the following command to run the server:
+If you have [Nix](https://nixos.org) installed, you can use the following command to run the server:
 
 ```bash
 nix-shell --pure --command 'python3 frontpages.py'
