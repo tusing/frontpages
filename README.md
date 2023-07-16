@@ -1,5 +1,7 @@
 # Frontpages
 
+![frontpages](https://github.com/tusing/frontpages/assets/1077203/0605d3c5-9fdd-4acf-8d51-0e1ba8e014da)
+
 Frontpages is a web server designed to fetch the front pages of various newspapers, convert them into images suitable for e-ink displays, and serve them through a Flask application. This is ideal for use with displays like the Visionect 32" e-ink display.
 
 The server retrieves PDF versions of the newspaper front pages from specified URLs, crops them based on provided parameters, resizes them to fit the display, and then serves them in a round-robin fashion.
