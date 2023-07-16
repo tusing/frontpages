@@ -1,5 +1,6 @@
 Flask
 Flask-Caching
+Flask-APScheduler
 requests
 PyYAML
 pdf2image

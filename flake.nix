@@ -9,7 +9,6 @@
       pkgs = nixpkgs.legacyPackages.${system};
       pythonEnv = pkgs.python3.withPackages (ps: with ps; [
         flask
-        flask-caching
         requests
         pdf2image
         pillow

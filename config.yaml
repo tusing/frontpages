@@ -18,10 +18,15 @@ pdfs:
       top_edge: 0.015
       bottom_edge: 0.02
 
-host: 0.0.0.0
-port: 5001
-cache_enabled: True
-cache_timeout: 14400 # 4 hours
-dpi: 300
-max_width: 1440
-max_height: 2560
+web:
+  host: 0.0.0.0
+  port: 5001
+
+image:
+  dpi: 300
+  max_width: 1440
+  max_height: 2560
+
+refresh_scheduler:
+  time: '06:00'
+  timezone: 'America/Los_Angeles'
