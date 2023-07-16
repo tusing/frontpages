@@ -1,0 +1,23 @@
+pdfs:
+  - url: 'https://cdn.freedomforum.org/dfp/pdf15/NY_NYT.pdf'
+    crop: 
+      left_edge: 75
+      right_edge: 75
+      top_edge: 100
+      bottom_edge: 200
+  - url: 'https://cdn.freedomforum.org/dfp/pdf15/WSJ.pdf'
+    crop: 
+      left_edge: 100
+      right_edge: 100
+      top_edge: 100
+      bottom_edge: 100
+  - url: 'https://cdn.freedomforum.org/dfp/pdf15/CA_SFC.pdf'
+    crop: 
+      left_edge: 100
+      right_edge: 100
+      top_edge: 75
+      bottom_edge: 100
+
+dpi: 300
+max_width: 1440
+max_height: 2560
