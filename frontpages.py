@@ -1,16 +1,16 @@
-import os
-import yaml
 import logging
+import os
 import requests
-from pdf2image import convert_from_bytes
-from itertools import cycle
-from PIL import Image
-from io import BytesIO
-from datetime import datetime, timedelta
-from zoneinfo import ZoneInfo
-import time
 import threading
+import time
+import yaml
+from datetime import datetime, timedelta
 from flask import Flask, send_file
+from io import BytesIO
+from itertools import cycle
+from pdf2image import convert_from_bytes
+from PIL import Image
+from zoneinfo import ZoneInfo
 
 # Load configuration from YAML file
 with open("config.yaml", "r") as f:
@@ -38,17 +38,18 @@ def get_delay(target_time, target_timezone):
 
 def crop_and_resize_image(image, crop_params, max_height, max_width):
     if crop_params:
-        image = image.crop((
-            crop_params["left_edge"] * image.width,
-            crop_params["top_edge"] * image.height,
-            image.width - (crop_params["right_edge"] * image.width),
-            image.height - (crop_params["bottom_edge"] * image.height)
-        ))
-    
+        image = image.crop(
+            (
+                crop_params["left_edge"] * image.width,
+                crop_params["top_edge"] * image.height,
+                image.width - (crop_params["right_edge"] * image.width),
+                image.height - (crop_params["bottom_edge"] * image.height),
+            )
+        )
+
     ratio = min(max_width / image.width, max_height / image.height)
     image = image.resize(
-        (int(image.width * ratio), int(image.height * ratio)), 
-        Image.LANCZOS
+        (int(image.width * ratio), int(image.height * ratio)), Image.LANCZOS
     )
 
     return image
@@ -67,10 +68,10 @@ def process_pdf(pdf_config):
     )[0]
 
     image = crop_and_resize_image(
-        image, 
-        pdf_config.get("crop"), 
-        config["image"]["max_height"], 
-        config["image"]["max_width"]
+        image,
+        pdf_config.get("crop"),
+        config["image"]["max_height"],
+        config["image"]["max_width"],
     )
 
     # Save image to in-memory file
@@ -85,8 +86,9 @@ def process_pdf(pdf_config):
 
 
 def fetch_newspapers():
-    delay = get_delay(config["refresh_scheduler"]["time"],
-                      config["refresh_scheduler"]["timezone"])
+    delay = get_delay(
+        config["refresh_scheduler"]["time"], config["refresh_scheduler"]["timezone"]
+    )
     logging.info(f"Refresh scheduled {delay} seconds from now...")
     threading.Timer(delay, fetch_newspapers).start()
 
