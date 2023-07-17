@@ -87,6 +87,7 @@ def process_pdf(pdf_config):
 def fetch_newspapers():
     delay = get_delay(config["refresh_scheduler"]["time"],
                       config["refresh_scheduler"]["timezone"])
+    logging.info(f"Refresh scheduled {delay} seconds from now...")
     threading.Timer(delay, fetch_newspapers).start()
 
     for pdf_config in config["pdfs"]:
