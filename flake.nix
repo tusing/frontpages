@@ -11,6 +11,7 @@
         flask
         pdf2image
         pillow
+        pydantic
         pyyaml
         requests
       ]);
