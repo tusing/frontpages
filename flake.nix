@@ -9,10 +9,10 @@
       pkgs = nixpkgs.legacyPackages.${system};
       pythonEnv = pkgs.python3.withPackages (ps: with ps; [
         flask
-        requests
         pdf2image
         pillow
         pyyaml
+        requests
       ]);
       path = "${pythonEnv}/bin:${pkgs.poppler_utils}/bin:$PATH";
       app = pkgs.writeShellScriptBin "frontpages" ''

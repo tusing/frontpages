@@ -12,21 +12,28 @@ The server is configured through a YAML file, `config.yaml`, with the following 
 
 ```yaml
 pdfs:
-  - url: 'https://cdn.freedomforum.org/dfp/pdf15/NY_NYT.pdf'  # The URL to the newspaper's front page in PDF format
-    crop:  # [optional] Parameters to crop the PDF
-      left_edge: 0.02  # Crop the left edge by 2% of the total width
-      right_edge: 0.02  # Crop the right edge by 2% of the total width
-      top_edge: 0.022  # Crop the top edge by 2.2% of the total height
+  # List of newspapers
+  - url: 'https://cdn.freedomforum.org/dfp/pdf15/NY_NYT.pdf'  # URL to the newspaper's front page in PDF format
+    crop:  # Optional parameters to crop the PDF
+      left_edge: 0.02    # Crop the left edge by 2% of the total width
+      right_edge: 0.02   # Crop the right edge by 2% of the total width
+      top_edge: 0.022    # Crop the top edge by 2.2% of the total height
       bottom_edge: 0.03  # Crop the bottom edge by 3% of the total height
   # More newspapers...
 
-host: "0.0.0.0" # Run on all addresses, set to 127.0.0.1 for localhost-only
-port: 5001 # The port to run the web-server on
-cache_enabled: True  # Enable in-memory caching of images (~3MB/newspaper)
-cache_timeout: 14400  # Cache timeout in seconds - here, images are cached for 4 hours
-dpi: 300  # Resolution for the PDF to image conversion
-max_width: 1440  # The maximum width of the image
-max_height: 2560  # The maximum height of the image
+web:
+  host: 0.0.0.0    # Run on all addresses
+  port: 5001       # The port to run on
+
+image:
+  dpi: 300         # Resolution for the PDF to image conversion
+  max_width: 1440  # The maximum width of the image
+  max_height: 2560 # The maximum height of the image
+
+refresh_scheduler:
+  time: '06:00'                    # The time at which to refresh frontpages
+  timezone: 'America/Los_Angeles'  # The timezone for the above time
+
 ```
 
 ## Running the server
@@ -41,9 +48,10 @@ nix run
 
 ### Without Nix
 
-If you don't have Nix installed, you will need to install the required dependencies manually. These can be installed using pip with the requirements.txt file.
+If you don't have Nix installed, you will need to install the required dependencies manually. These can be installed using apt and pip with the requirements.txt file.
 
 ```bash
+apt update && apt install poppler-utils
 pip install -r requirements.txt
 ```
 

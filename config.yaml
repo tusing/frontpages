@@ -28,5 +28,5 @@ image:
   max_height: 2560
 
 refresh_scheduler:
-  time: '06:00'
+  time: '10:44'
   timezone: 'America/Los_Angeles'
