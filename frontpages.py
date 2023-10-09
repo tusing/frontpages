@@ -64,8 +64,10 @@ def crop_and_resize_image(
 
 
 def process_pdf(pdf_config: PdfConfig) -> None:
-    pdf_url = pdf_config.url
-    img_filename = f"{os.path.basename(pdf_url)}.png"
+    day = datetime.now().day
+    newspaper = str(pdf_config.newspaper)
+    pdf_url = f"https://cdn.freedomforum.org/dfp/pdf{day}/{newspaper}.pdf"
+    img_filename = f"{newspaper}.png"
 
     logging.info(f"Fetching {pdf_url}...")
 
@@ -105,7 +107,7 @@ def fetch_newspapers() -> None:
 @app.route("/")
 def home() -> Union[str, bytes]:
     pdf_config = next(pdfs)
-    img_filename = f"{os.path.basename(pdf_config.url)}.png"
+    img_filename = f"{pdf_config.newspaper}.png"
     image_copy = BytesIO(cache[img_filename].getbuffer())
     return send_file(image_copy, mimetype="image/png")
 

@@ -1,17 +1,17 @@
 pdfs:
-  - url: 'https://cdn.freedomforum.org/dfp/pdf15/NY_NYT.pdf'
+  - newspaper: 'NY_NYT'
     crop: 
       left_edge: 0.02
       right_edge: 0.02
       top_edge: 0.022
       bottom_edge: 0.03
-  - url: 'https://cdn.freedomforum.org/dfp/pdf15/WSJ.pdf'
+  - newspaper: 'WSJ'
     crop: 
       left_edge: 0.04
       right_edge: 0.04
       top_edge: 0.02
       bottom_edge: 0.025
-  - url: 'https://cdn.freedomforum.org/dfp/pdf15/CA_SFC.pdf'
+  - newspaper: 'CA_SFC'
     crop: 
       left_edge: 0.04
       right_edge: 0.04
