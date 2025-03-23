@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  frontpages:
+    build: .
+    ports:
+      - "5001:5001"
+    restart: unless-stopped
+    volumes:
+      - ./config.yaml:/app/config.yaml:ro
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+        reservations:
+          memory: 256M
+          cpus: '0.1' 

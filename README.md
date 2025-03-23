@@ -38,6 +38,20 @@ refresh_scheduler:
 
 ## Running the server
 
+### With Docker
+
+The easiest way to run Frontpages is with Docker:
+
+```bash
+# Build and start the container
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+```
+
+You can modify the `config.yaml` file and the container will use your changes without needing to rebuild.
+
 ### With Nix
 
 If you have [Nix](https://nixos.org) installed, you can use the following command to run the server:
@@ -63,4 +77,4 @@ python3 frontpages.py
 
 ## Accessing the front pages
 
-Once the server is running, you can access the front pages by opening a web browser and navigating to `http://localhost:5000/`.
+Once the server is running, you can access the front pages by opening a web browser and navigating to `http://localhost:5001/`.

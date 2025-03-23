@@ -64,9 +64,9 @@ def crop_and_resize_image(
 
 
 def process_pdf(pdf_config: PdfConfig) -> None:
-    day = datetime.now().day
     newspaper = str(pdf_config.newspaper)
-    pdf_url = f"https://cdn.freedomforum.org/dfp/pdf{day}/{newspaper}.pdf"
+    date_str = datetime.now(tz=ZoneInfo('America/Los_Angeles')).strftime("%Y-%m-%d")
+    pdf_url = f"https://d2dr22b2lm4tvw.cloudfront.net/{newspaper}/{date_str}/front-page.pdf"
     img_filename = f"{newspaper}.png"
 
     logging.info(f"Fetching {pdf_url}...")
