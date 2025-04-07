@@ -8,7 +8,7 @@ pdfs:
 
 web:
   host: 0.0.0.0
-  port: 5001
+  port: 15001
 
 image:
   dpi: 300
@@ -18,3 +18,8 @@ image:
 refresh_scheduler:
   time: '06:00'
   timezone: 'America/Los_Angeles'
+
+source:
+  base_url: 'https://d2dr22b2lm4tvw.cloudfront.net'
+  pdf_slug: 'front-page.pdf'
+  max_lookback_days: 5

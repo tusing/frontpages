@@ -64,8 +64,15 @@ class RefreshSchedulerConfig(BaseModel):
         return v
 
 
+class SourceConfig(BaseModel):
+    base_url: AnyHttpUrl
+    pdf_slug: str
+    max_lookback_days: conint(ge=1, le=30) = 5
+
+
 class Config(BaseModel):
     pdfs: List[PdfConfig]
     web: WebConfig
     image: ImageConfig
     refresh_scheduler: RefreshSchedulerConfig
+    source: SourceConfig

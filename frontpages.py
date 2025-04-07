@@ -65,34 +65,62 @@ def crop_and_resize_image(
 
 def process_pdf(pdf_config: PdfConfig) -> None:
     newspaper = str(pdf_config.newspaper)
-    date_str = datetime.now(tz=ZoneInfo('America/Los_Angeles')).strftime("%Y-%m-%d")
-    pdf_url = f"https://d2dr22b2lm4tvw.cloudfront.net/{newspaper}/{date_str}/front-page.pdf"
     img_filename = f"{newspaper}.png"
+    
+    # Try with current date and go backward up to max_lookback_days if needed
+    current_date = datetime.now(tz=ZoneInfo('America/Los_Angeles'))
+    max_lookback_days = config.source.max_lookback_days
+    
+    for days_ago in range(max_lookback_days):
+        date = current_date - timedelta(days=days_ago)
+        if fetch_newspaper_for_date(newspaper, date, img_filename, pdf_config):
+            return  # Success, exit the function
+    
+    # If we get here, all attempts failed
+    logging.error(f"Could not fetch {newspaper} front page after {max_lookback_days} attempts")
+
+
+def fetch_newspaper_for_date(newspaper: str, date: datetime, img_filename: str, pdf_config: PdfConfig) -> bool:
+    """
+    Attempts to fetch and process newspaper front page for a specific date.
+    Returns True if successful, False otherwise.
+    """
+    date_str = date.strftime("%Y-%m-%d")
+    pdf_url = f"{config.source.base_url}/{newspaper}/{date_str}/{config.source.pdf_slug}"
 
     logging.info(f"Fetching {pdf_url}...")
 
-    # Grab and convert the PDF to an image
-    PDF_BYTES = requests.get(pdf_url).content
-    image = convert_from_bytes(
-        PDF_BYTES, dpi=config.image.dpi, first_page=1, last_page=1
-    )[0]
+    try:
+        # Grab and convert the PDF to an image
+        response = requests.get(pdf_url)
+        response.raise_for_status()  # Raise exception for 4XX/5XX responses
+        
+        PDF_BYTES = response.content
+        image = convert_from_bytes(
+            PDF_BYTES, dpi=config.image.dpi, first_page=1, last_page=1
+        )[0]
 
-    image = crop_and_resize_image(
-        image,
-        pdf_config.crop,
-        config.image.max_height,
-        config.image.max_width,
-    )
+        image = crop_and_resize_image(
+            image,
+            pdf_config.crop,
+            config.image.max_height,
+            config.image.max_width,
+        )
 
-    # Save image to in-memory file
-    image_file = BytesIO()
-    image.save(image_file, "PNG")
-    image_file.seek(0)
+        # Save image to in-memory file
+        image_file = BytesIO()
+        image.save(image_file, "PNG")
+        image_file.seek(0)
 
-    # Add image to cache
-    cache[img_filename] = image_file
+        # Add image to cache
+        cache[img_filename] = image_file
 
-    logging.info(f"Finished fetching {pdf_url}")
+        logging.info(f"Successfully fetched {pdf_url}")
+        return True
+        
+    except Exception as e:
+        logging.warning(f"Failed to fetch {pdf_url}: {e}")
+        return False
 
 
 def fetch_newspapers() -> None:

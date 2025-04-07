@@ -15,7 +15,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY config.py config.yaml frontpages.py ./
 
 # Expose the port the app runs on
-EXPOSE 5001
+EXPOSE 15001
 
 # Run the application
 CMD ["python", "frontpages.py"] 
