@@ -1,3 +1,5 @@
+THIS REPOSITORY HAS BEEN TEMPORARILY MADE PUBLIC, STARTING 11/21/2025.
+
 # Frontpages
 
 ![frontpages](https://github.com/tusing/frontpages/assets/1077203/0605d3c5-9fdd-4acf-8d51-0e1ba8e014da)
